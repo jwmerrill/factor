@@ -2,7 +2,7 @@
 ! See http://factorcode.org/license.txt for BSD license.
 USING: kernel math math.functions math.derivatives accessors
     macros generic compiler.units words effects vocabs
-    sequences arrays assocs generalizations fry make
+    sequences arrays assocs generalizations fry locals make
     combinators.smart help help.markup ;
 
 IN: math.dual
@@ -49,18 +49,12 @@ MACRO: chain-rule ( word -- e )
     tri
     '[ [ @ _ @ ] sum-outputs ] ;
 
-: set-dual-help ( word dword -- ) 
-    [ swap
-        [ stack-effect [ in>> ] [ out>> ] bi append 
-            [ dual ] { } map>assoc { $values } prepend
-        ]
-        [ [ { $description } % "Version of " , 
-                   { $link } swap suffix , 
-                   " extended to work on dual numbers." , ] 
-            { } make
-        ]
-        bi* 2array
-    ] keep set-word-help ;
+:: set-dual-help ( word dword -- )
+    word stack-effect [ in>> ] [ out>> ] bi append
+    [| elt | { elt dual } ] map \ $values prefix
+    { $description "Version of " { $link word } 
+        " extended to work on dual numbers." }
+    2array dword set-word-help ;
 
 PRIVATE>
 
